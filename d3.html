@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			[v-cloak] {
+				display: none;
+			}
+			
+			#box {
+				min-height: 700px;
+				background: #CCCCCC;
+			}
+			
+			.lee-title {
+				position: fixed;
+				z-index: -1;
+				line-height: 50px;
+				text-align: center;
+				width: 100%;
+				top: 0;
+				left: 0;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="box" v-cloak="" v-lee="statusType">
+			<div v-for="i in num">
+				{{i}}
+			</div>
+		</div>
+	</body>
+	<script src="vue.js"></script>
+	<script>
+		Vue.directive('lee', {
+			inserted(a, b) {
+				a.style.position = 'relative'
+				var div = document.createElement('div')
+					div.className = 'lee-title'
+					a.append(div)
+				a.onmousedown = function(event) {
+					div.innerText = '下拉刷新'
+					a.style.transition = ''
+					var downY = event.clientY
+					var num = 0
+					document.onmousemove = function(event) {
+						var moveY = event.clientY
+						if(moveY > downY) {
+							num = moveY - downY
+
+						} else {
+							num = 0
+						}
+						if(num > 100) {
+							div.innerText = '松开刷新'
+						} else {
+							div.innerText = '下拉刷新'
+						}
+						a.style.top = num + 'px'
+					}
+					document.onmouseup = function() {
+						a.style.transition = ' all .5s'
+						if(num > 100) {
+							div.innerText = '正在刷新'
+							b.value(true)
+							a.style.top = '50px'
+						} else {
+							a.style.top = 0
+							b.value(false)
+						}
+						document.onmousemove = ''
+					}
+				}
+			},
+			componentUpdated(a) {
+				a.style.top = 0
+			}
+		})
+
+		new Vue({
+			el: "#box",
+			data: {
+				num: 12
+			},
+			methods: {
+				statusType(type) {
+					if(type) {
+						setTimeout(() => {
+							this.num++
+						}, 1000)
+					}
+					console.log(type)
+				}
+			}
+		})
+	</script>
+
+</html>

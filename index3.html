@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			[v-cloak] {
+				display: none;
+			}
+			
+			.childrens {
+				width: 100px;
+				display: inline-block;
+				height: 100px;
+				background-size: auto 100%;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="box" style="overflow: hidden;">
+			<div style="overflow: hidden;text-align: center;padding: 100px;" v-lee>
+				<div class="childrens" v-for="i in arr" :style="{backgroundImage:'url('+i+')'}"></div>
+			</div>
+		</div>
+	</body>
+	<script src="vue.js"></script>
+	<script>
+		Vue.directive('lee', {
+			inserted(a, b) {
+				var list = a.children
+				var moveY = 0
+				var moveX = 0
+				for(var i = 0; i < list.length; i++) {
+					list[i].onclick = function() {
+						for(var a = 0; a < list.length; a++) {
+							list[a].style.backgroundPosition = "-800px 0"
+						}
+						this.style.backgroundPosition = "0 0"
+					}
+				}
+				document.onmousemove = function(event) {
+					moveX = event.clientX
+					moveY = event.clientY
+					for(var i = 0; i < list.length; i++) {
+						types(list[i])
+					}
+				}
+
+				function types(domdiv) {
+					var divtop = domdiv.offsetTop
+					var divleft = domdiv.offsetLeft
+					var divheight = domdiv.offsetHeight
+					var divwidth = domdiv.offsetWidth
+					//moveY   鼠标y
+					//moveX   鼠标x
+					if(moveY < divtop && moveX < divleft) {
+						console.log('左上角')
+						domdiv.style.backgroundPosition = "-600px 0"
+					} else if(moveY < divtop && moveX > divleft && moveX < divleft + divwidth) {
+						console.log('上角')
+						domdiv.style.backgroundPosition = "-500px 0"
+					} else if(moveY < divtop && moveX > divleft + divwidth) {
+						console.log('右上角')
+						domdiv.style.backgroundPosition = "-400px 0"
+					} else if(moveX > divleft + divwidth && moveY > divtop && moveY < divtop + divheight) {
+						console.log('右边')
+						domdiv.style.backgroundPosition = "-300px 0"
+					} else if(moveX > divleft + divwidth && moveY > divtop + divheight) {
+						console.log('右下角')
+						domdiv.style.backgroundPosition = "-700px 0"
+					} else if(moveY > divtop + divheight && moveX < divleft + divwidth && moveX > divleft) {
+						console.log('下边')
+						domdiv.style.backgroundPosition = "-800px 0"
+					} else if(moveY > divtop + divheight && moveX < divleft) {
+						console.log('左下角')
+						domdiv.style.backgroundPosition = "-900px 0"
+					} else if(moveX < divleft && moveY > divtop && moveY < divtop + divheight) {
+						console.log('左边')
+						domdiv.style.backgroundPosition = "-1000px 0"
+					} else if(moveX > divleft && moveX < divleft + divwidth && moveY > divtop && moveY < divtop + divheight) {
+						console.log('中间')
+						domdiv.style.backgroundPosition = "-100px 0"
+					}
+				}
+			}
+		})
+		new Vue({
+			el: "#box",
+			data: {
+				arr: [
+			'http://www.jq22.com/demo/jquery-gensui20150907/css/img/team/attila_szasz.jpg',
+			'http://www.jq22.com/demo/jquery-gensui20150907/css/img/team/bogdan_haifa.jpg', 			'http://www.jq22.com/demo/jquery-gensui20150907/css/img/team/comp_andor.jpg',
+			'http://www.jq22.com/demo/jquery-gensui20150907/css/img/team/comp_bogdan.jpg',
+			'http://www.jq22.com/demo/jquery-gensui20150907/css/img/team/comp_bogus.jpg',
+			'http://www.jq22.com/demo/jquery-gensui20150907/css/img/team/comp_boti.jpg'
+				]
+			}
+		})
+	</script>
+
+</html>
